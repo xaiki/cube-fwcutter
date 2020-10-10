@@ -29,6 +29,9 @@ for the =hex= i suggest using this little snippet:
 cat extract/Image695.hex | sed s/'^\:........'//g | sed s/'...$'//g | perl -n -e 'map { printf("%c", hex) } (unpack "(A2)*")' > fw.bin
 #+end_src
 
+for the =mpfs= that you'll find runing =binwalk= on the =.bin= files, you can
+contribute to =/bin/mpfs.rs=
+
 *** src/bin/mpfs.rs
 is an incipiant mpfs extractor, my current theory is that the mpfs in the
 binaries we have is BigEndian and that's why all (opensource) tools I can get my hand on
