@@ -1,0 +1,53 @@
+#+TITTLE: cube-fwcutter
+
+* What you will find here
+this is a collection of hacks that I'm using while trying to reverse engineer
+the cube3 3d printer firmware, there are a lot of tools out there, but i feel
+the data is scattered out between code and forum posts without much
+consistency.
+
+even worse, one of the forums where most participation seemed to be ocuring is
+now dead =/
+
+if you have any docs or data on this line or printer, please get in touch by
+creating an issue in this repo !
+** bin/*.rs
+you can run any of those by running
+#+begin_src shell
+cargo run ${name}
+#+end_src
+
+*** src/bin/cut.rs
+this is functional firmware cutter, give it an =firmware.ar= file as argument,
+and it'll expand the files in the =extract= directory.
+
+note that this will *NOT* expand the =.hex= and =.bin= files, you need to do
+that manually.
+
+for the =hex= i suggest using this little snippet:
+#+begin_src shell
+cat extract/Image695.hex | sed s/'^\:........'//g | sed s/'...$'//g | perl -n -e 'map { printf("%c", hex) } (unpack "(A2)*")' > fw.bin
+#+end_src
+
+*** src/bin/mpfs.rs
+is an incipiant mpfs extractor, my current theory is that the mpfs in the
+binaries we have is BigEndian and that's why all (opensource) tools I can get my hand on
+can't open it, right now it only dumps debug information.
+
+** src/*.rs
+those are mostly my libs, you'll find a hexdumper in =main.rs= that i wrote
+mostly to understand how the =firmare.ar= file was formated, then a couple of
+libs:
+
+*** src/mpfs.rs
+is an incipiant mpfs2 parsing library written in rust, mostly inspired by https://github.com/freshness79/mpfsx
+
+*** src/maps.rs
+is a lib to make Mmaps readable so I can use them with the byteorder crate
+
+*** src/pattern.rs
+is the lib extracted from the pattern matching tool, i use it in cutter to
+aliviate looking for patterns in binary data.
+
+*** src/circular_buffer.rs
+is a quick&dirty circular buffer implementation used in the pattern lib
